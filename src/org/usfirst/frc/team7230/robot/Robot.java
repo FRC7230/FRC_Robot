@@ -36,18 +36,18 @@ import edu.wpi.first.wpilibj.PIDOutput;
  */
 public class Robot extends IterativeRobot {
 
-	private Encoder
-	enc_0 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
-	private Encoder
-	enc_1 = new Encoder(1, 1, false, Encoder.EncodingType.k4X);
+	//private Encoder
+	//enc_0 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+	//private Encoder
+	//enc_1 = new Encoder(1, 1, false, Encoder.EncodingType.k4X);
 	private DifferentialDrive m_robotDrive
 			= new DifferentialDrive(new Spark(0), new Spark(1));
 	private Joystick m_stick = new Joystick(0);
 	private Joystick m_grab = new Joystick(1);
 	private Timer m_timer = new Timer();
-	EncoderPIDSource eSource = new EncoderPIDSource(enc_0,enc_1);
-	EncoderPIDOutput eOutput = new EncoderPIDOutput();
-	private PIDController m_robotPID = new PIDController(1,1,1,1,eSource,eOutput);
+	//EncoderPIDSource eSource = new EncoderPIDSource(enc_0,enc_1);
+	//EncoderPIDOutput eOutput = new EncoderPIDOutput();
+	//private PIDController m_robotPID = new PIDController(1,1,1,1,eSource,eOutput);
 	
 	
 
@@ -120,8 +120,11 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 	
 			// Drive for 2 seconds
-			if (m_timer.get() < 2.0) {
-				m_robotDrive.arcadeDrive(0.5, 0.0); // drive forwards half speed
+			if (m_timer.get() < 3.0) {
+				m_robotDrive.arcadeDrive(-0.5, 0.0); // drive forwards half speed
+			if (m_timer.get() > 3.0) {
+				m_robotDrive.arcadeDrive(0.0,0.5);
+			}
 			} else {
 				m_robotDrive.stopMotor(); // stop robot
 			}
@@ -143,7 +146,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		m_robotDrive.arcadeDrive(m_stick.getY(), m_stick.getX());
+		float a= .5f;
+		double Y= m_stick.getY();
+		double X=m_stick.getX();
+		m_robotDrive.arcadeDrive(a*Y*Y*Y+(1-a)*Y, a*X*X*X+(1-a)*X);
 	}
 
 	/**
