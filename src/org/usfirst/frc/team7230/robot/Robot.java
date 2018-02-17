@@ -49,7 +49,7 @@ public class Robot extends IterativeRobot {
 	//EncoderPIDOutput eOutput = new EncoderPIDOutput();
 	//private PIDController m_robotPID = new PIDController(1,1,1,1,eSource,eOutput);
 	
-	
+	SendableChooser<String> autoPositionChooser;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -57,6 +57,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		autoPositionChooser = new SendableChooser<String>();
+		autoPositionChooser.addDefault("Left", "Left");
+		autoPositionChooser.addObject("Middle", "Middle");
+		autoPositionChooser.addObject("Right", "Right");
+		SmartDashboard.putData("Robot Position", autoPositionChooser);
 		  
 	}
 
@@ -98,7 +103,13 @@ public class Robot extends IterativeRobot {
 		} else {
 			System.out.println("The scale is on the right");
 			//Put right auto code here
-		}	m_timer.reset();
+		}
+		
+		String choice = autoPositionChooser.getSelected();
+		
+		System.out.println("The robot is in the [" + choice + "] position.");
+		
+		m_timer.reset();
 		m_timer.start();
 
 		/*
