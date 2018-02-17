@@ -41,7 +41,9 @@ public class Robot extends IterativeRobot {
 	//private Encoder
 	//enc_1 = new Encoder(1, 1, false, Encoder.EncodingType.k4X);
 	private DifferentialDrive m_robotDrive
-			= new DifferentialDrive(new Spark(0), new Spark(1));
+			= new DifferentialDrive(new Spark(0), new Spark(2));
+	private DifferentialDrive s_robotDrive
+	= new DifferentialDrive(new Spark(1), new Spark(3));
 	private Joystick m_stick = new Joystick(0);
 	private Joystick m_grab = new Joystick(1);
 	private Timer m_timer = new Timer();
@@ -119,14 +121,15 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 	
-			// Drive for 2 seconds
-			if (m_timer.get() < 3.0) {
-				m_robotDrive.arcadeDrive(-0.5, 0.0); // drive forwards half speed
-			if (m_timer.get() > 3.0) {
-				m_robotDrive.arcadeDrive(0.0,0.5);
+			// Drive for 1 seconds calibration
+			if (m_timer.get() < 1.0) {
+				m_robotDrive.arcadeDrive(-0.65, 0.0); 
+				s_robotDrive.arcadeDrive(-0.65, 0.0);// drive forwards half speed
+		
 			}
-			} else {
-				m_robotDrive.stopMotor(); // stop robot
+			 else {
+				m_robotDrive.stopMotor();
+				s_robotDrive.stopMotor();// stop robot
 			}
 		}
 	
@@ -146,10 +149,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		float a= .5f;
+		//double a= (m_stick.getThrottle()+1)/2;
 		double Y= m_stick.getY();
 		double X=m_stick.getX();
-		m_robotDrive.arcadeDrive(a*Y*Y*Y+(1-a)*Y, a*X*X*X+(1-a)*X);
+		m_robotDrive.arcadeDrive(Math.pow(Y,1.48), Math.pow(X, 1.48));
+		s_robotDrive.arcadeDrive(Math.pow(Y,1.48), Math.pow(X, 1.48));
+		//m_robotDrive.arcadeDrive(Y, X);
+		//s_robotDrive.arcadeDrive(Y, X);
+		
 	}
 
 	/**
