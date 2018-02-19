@@ -22,6 +22,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import org.usfirst.frc.team7230.robot.commands.ExampleCommand;
 import org.usfirst.frc.team7230.robot.subsystems.ExampleSubsystem;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -40,10 +45,14 @@ public class Robot extends IterativeRobot {
 	//enc_0 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 	//private Encoder
 	//enc_1 = new Encoder(1, 1, false, Encoder.EncodingType.k4X);
-	private DifferentialDrive m_robotDrive
+	private DifferentialDrive m_robotDrive //main
 			= new DifferentialDrive(new Spark(0), new Spark(2));
-	private DifferentialDrive s_robotDrive
+	private DifferentialDrive s_robotDrive //secondary
 	= new DifferentialDrive(new Spark(1), new Spark(3));
+	private TalonSRX l_motor = new TalonSRX(1); //left
+	private TalonSRX r_motor = new TalonSRX(2); //right
+	private VictorSPX w_motor = new VictorSPX(3); //west
+	private VictorSPX e_motor = new VictorSPX(4); //east
 	private Joystick m_stick = new Joystick(0);
 	private Joystick m_grab = new Joystick(1);
 	private Timer m_timer = new Timer();
@@ -131,6 +140,27 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		String gameData;
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		if(gameData.charAt(0)== 'L' ){//switch is left
+			if (autoPositionChooser.getName()=="Left") {
+				
+			}else if (autoPositionChooser.getName()=="Middle") {
+	
+			}else if (autoPositionChooser.getName()=="Right") {
+				
+			}
+		}
+		else {//switch is right
+		if (autoPositionChooser.getName()=="Left") {
+			
+		}else if (autoPositionChooser.getName()=="Middle") {
+			
+		}else if (autoPositionChooser.getName()=="Right") {
+			
+		}
+			
+		}
 	
 			// Drive for 1 seconds calibration
 			if (m_timer.get() < 1.0) {
@@ -141,9 +171,10 @@ public class Robot extends IterativeRobot {
 			 else {
 				m_robotDrive.stopMotor();
 				s_robotDrive.stopMotor();// stop robot
-			}
+			
 		}
-	
+		
+		}
 
 	@Override
 	public void teleopInit() {
@@ -160,14 +191,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		//double a= (m_stick.getThrottle()+1)/2;
+		double a= (m_stick.getThrottle()+2);
 		double Y= m_stick.getY();
 		double X=m_stick.getX();
-		m_robotDrive.arcadeDrive(Math.pow(Y,1.48), Math.pow(X, 1.48));
-		s_robotDrive.arcadeDrive(Math.pow(Y,1.48), Math.pow(X, 1.48));
-		//m_robotDrive.arcadeDrive(Y, X);
-		//s_robotDrive.arcadeDrive(Y, X);
-		
+		m_robotDrive.arcadeDrive(a*Y*Y*Y,a*X*X*X);
+		s_robotDrive.arcadeDrive(a*Y*Y*Y,a*X*X*X);
+		l_motor.set(ControlMode.PercentOutput,m_grab.getY() );
+		r_motor.set(ControlMode.PercentOutput,m_grab.getY() );
+		l_motor.set(ControlMode.PercentOutput,m_grab.getX() );
+		r_motor.set(ControlMode.PercentOutput,-m_grab.getX());
+		w_motor.set(ControlMode.Follower, 1);
+		e_motor.set(ControlMode.Follower,2);
+
 	}
 
 	/**
